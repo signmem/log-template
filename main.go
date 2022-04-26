@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/signmem/log-template/g"
-	"log"
 	"os"
 )
 
@@ -21,11 +20,12 @@ func main() {
 	}
 
 	g.ParseConfig(*cfg)
-	g.InitLog()
-	
-	log.Printf("[INFO] aaaaa bbbb cdcc")
+	g.Logger = g.InitLog()
+
 	if g.Config().Debug {
-		log.Printf("[DEBUG] yes")
+		g.Logger.Debug("debug: yes")
+		g.Logger.Info("info: yes")
+		g.Logger.Warning("warning: yes")
 	}
 
 

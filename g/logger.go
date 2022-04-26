@@ -1,20 +1,37 @@
 package g
 
 import (
-	"log"
-	"os"
+	"fmt"
+	"github.com/lestrrat/go-file-rotatelogs"
+	"github.com/coreos/go-log/log"
+	"time"
 )
 
-func InitLog() {
+var (
+	Logger *log.Logger
+	Ipaddr string
+)
 
+func InitLog() *log.Logger {
+	LogMaxAge := Config().LogMaxAge
+	LogRotateAge := Config().LogRotateAge
 	logfile := Config().LogFile
-	loggerFile, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
+	writer, err := rotatelogs.New(
+		fmt.Sprintf("%s.%s", logfile, "%Y%m%d_%H%M%S.log"),
+		rotatelogs.WithLinkName(logfile),
+		rotatelogs.WithMaxAge(time.Second * time.Duration(LogMaxAge)),
+		rotatelogs.WithRotationTime(time.Second * time.Duration(LogRotateAge)),
+	)
 
 	if err != nil {
-		panic(err) // Check for error
+		panic(fmt.Errorf("error opening file: %v", err))
 	}
 
-	log.SetOutput(loggerFile)
-	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Ltime)
-	return
+	Logger := log.NewSimple(
+		log.WriterSink(writer,
+			"[%s] [%s] [%d] [%s:%d] >>> [%s] msg=%s\n",
+			[]string{"full_time", "priority", "pid", "filename", "lineno",
+				"executable", "message"}))
+
+	return Logger
 }

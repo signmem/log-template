@@ -1,5 +1,6 @@
 {
     "debug":true,
-    "loglevel": "debug",
-    "logfile": "./app.log"
+    "logfile": "./app.log",
+    "logmaxage": 432000,
+    "logrotateage": 86400
 }
