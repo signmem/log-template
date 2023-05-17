@@ -3,4 +3,8 @@
     "logfile": "./app.log",
     "logmaxage": 432000,
     "logrotateage": 86400
+    "http": {
+        "address": "",
+        "port": 8088
+    }
 }
